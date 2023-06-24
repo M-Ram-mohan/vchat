@@ -1,8 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const { chats } = require("./data/data.js");
+const connectDB = require('./config/db.js');
 
 dotenv.config();
+connectDB();
 const app = express();
 
 app.get("/",(req,res) => {
