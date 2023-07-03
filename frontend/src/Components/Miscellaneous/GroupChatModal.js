@@ -40,7 +40,7 @@ const GroupChatModal = ({children}) => {
                 isClosable: true,
                 position: "bottom-left",
             })
-            return;
+            setLoading(false);
         }
     };
 
