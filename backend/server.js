@@ -6,6 +6,7 @@ const userRoutes = require('./routers/userRoutes.js');
 const chatRoutes = require('./routers/chatRoutes.js');
 const messageRoutes = require('./routers/messageRoutes');
 const { notFound, errorHandler } = require("./middleware/errorMiddleware.js");
+const path = require("path");
 
 dotenv.config();
 connectDB();
@@ -13,19 +14,32 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/",(req,res) => {
-    res.send("API is running Successfully");
-    console.log("Inside the server = " + chats);
-});
+// app.get("/",(req,res) => {
+//     res.send("API is running Successfully");
+// });
 
 app.use('/api/user', userRoutes);
 app.use("/api/chat",chatRoutes);
 app.use('/api/message',messageRoutes);
 
+// ----------Deployment---------
+const __dirname1 = path.resolve();
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static(path.join(__dirname1,'/frontend/build')));
+    app.get("*",(req,res) => {
+        res.sendFile(path.resolve(__dirname1,"frontend","build","index.html"));
+    })
+} else{
+    app.get("/",(req,res) => {
+        res.send("API is running Successfully");
+    });
+}
+// ----------Deployment---------
+
 app.use(notFound)
 app.use(errorHandler)
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, console.log(`Server started on PORT ${PORT}`));
 const io = require('socket.io')(server,{
@@ -35,14 +49,14 @@ const io = require('socket.io')(server,{
     },
 });
 io.on("connection",(socket)=>{
-    console.log('connected to socket.io');
+    // console.log('connected to socket.io');
     socket.on('setup',(userData)=>{
         socket.join(userData._id);
         socket.emit('connected');
     })
     socket.on('join chat',(room)=>{
         socket.join(room);
-        console.log('User joined room: ' + room);
+        // console.log('User joined room: ' + room);
     })
     socket.on('typing',(room) => socket.in(room).emit('typing'));
     socket.on('stop typing',(room) => socket.in(room).emit('stop typing'));
