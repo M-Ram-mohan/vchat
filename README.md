@@ -1,2 +1,2 @@
 # vchat
-### The link to the website is [Link Text](https://vchat-jana.onrender.com)
+### The link to the website is [V-Chat](https://vchat-jana.onrender.com)
